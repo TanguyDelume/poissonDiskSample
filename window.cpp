@@ -50,20 +50,12 @@ void Window::pollEvents()
 		SDL_MouseButtonEvent mouseEvent = event.button;
 		if (mouseEvent.button == SDL_BUTTON_LEFT )
 		{
-			clearDots();
+			_poissonDisk;
 			_dots.push_back(Dot(_renderer, mouseEvent.x, mouseEvent.y, 15, 200, 200, 200, 255));
 		}
 	}
 	
-	for (auto &dot : _dots)
-		dot.pollEvents(event);
 }
-
-void Window::clearDots()
-{
-	_dots.clear();
-}
-
 void Window::clear() const 
 {
 	SDL_RenderPresent(_renderer);
