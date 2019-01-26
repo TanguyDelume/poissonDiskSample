@@ -40,7 +40,8 @@ class PoissonDiskSample
 		 int windowHeight,
 		 int minDistance,
 		 int sampleRejectLimit,
-		 SDL_Renderer* renderer);
+		 SDL_Renderer* renderer,
+		 SDL_Event* event);
 
 	~PoissonDiskSample() 
 	{
@@ -53,7 +54,7 @@ class PoissonDiskSample
 			delete[] _grid;
 		}
 	}
-
+	void pollEvents();
 	void reDraw();
 	static int random (int min, int max);
 	
@@ -65,6 +66,8 @@ class PoissonDiskSample
 
 	private:
 	SDL_Renderer* _renderer;
+	SDL_Event* _event;
+	bool _stopped = false;
 	double _cellSize;
 	std::vector<Vector2> _newSamples;
 	std::vector<Vector2> _samples;

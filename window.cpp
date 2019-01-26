@@ -1,6 +1,6 @@
 #include "window.h"
 
-#define DISTANCE 80
+#define DISTANCE 40
 
 Window::Window(const std::string &title, int width, int height) :
 	_title(title), _width(width), _height(height)
@@ -28,7 +28,7 @@ bool Window::init()
 		std::cerr << "Failed to create window \n";
 		return 0;
 	}
-	_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+	_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
 	if (_renderer == nullptr)
 	{
 		std::cerr << "failed to create renderer \n";
@@ -51,8 +51,8 @@ void Window::pollEvents()
 		SDL_MouseButtonEvent mouseEvent = event.button;
 		if (mouseEvent.button == SDL_BUTTON_LEFT )
 		{
-			delete _poissonDisk;
-			_poissonDisk = new PoissonDiskSample(mouseEvent.x, mouseEvent.y, _width, _height, DISTANCE, 30, _renderer);
+			if (_poissonDisk == nullptr)
+				_poissonDisk = new PoissonDiskSample(mouseEvent.x, mouseEvent.y, _width, _height, DISTANCE, 30, _renderer, &event);
 		}
 	}
 	

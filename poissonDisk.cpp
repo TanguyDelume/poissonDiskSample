@@ -1,5 +1,7 @@
 #include "poissonDisk.h"
 
+#define CIRCLE_RADIUS 15
+
 PoissonDiskSample::PoissonDiskSample
 (int startx,
  int starty,
@@ -7,13 +9,15 @@ PoissonDiskSample::PoissonDiskSample
  int windowHeight,
  int minDistance,
  int sampleRejectLimit,
- SDL_Renderer* renderer):
+ SDL_Renderer* renderer,
+ SDL_Event* event):
 	_origin(Vector2(startx,starty)),
 	_windowWidth(windowWidth),
 	_windowHeight(windowHeight),
 	_minDistance(minDistance),
 	_sampleRejectLimit(sampleRejectLimit),
-	_renderer(renderer)
+	_renderer(renderer),
+	_event(event)
 {
 	_cellSize = _minDistance / sqrt(2);
 	_nbColumns = floor(_windowWidth / _cellSize);
@@ -28,7 +32,6 @@ PoissonDiskSample::PoissonDiskSample
 	_grid[(int)floor(_origin.x / _cellSize)][(int)floor(_origin.y / _cellSize)] = 0;
 	_samples.push_back(_origin);
 	srand (time(NULL));
-	reDraw();
 	computeNewSamples();
 }
 
@@ -36,8 +39,11 @@ PoissonDiskSample::PoissonDiskSample
 void PoissonDiskSample::computeNewSamples()
 {
 	_newSamples.push_back(_origin);
+	reDraw();
 	while(!_newSamples.empty())
 	{
+		if (_stopped)
+			return;
 		int sampleIndex = random(0, _newSamples.size() - 1);
 		Vector2 samplePos = _newSamples[sampleIndex];
 		bool sampleValidated = false;
@@ -61,8 +67,6 @@ void PoissonDiskSample::computeNewSamples()
 			_newSamples.erase(_newSamples.begin() + sampleIndex);
 			reDraw();
 		}
-
-
 	}
 }
 
@@ -141,17 +145,36 @@ void PoissonDiskSample::drawSample(int posX, int posY, int radius, int r, int g,
    } 
 }
 
+void PoissonDiskSample::pollEvents()
+{
+        if (!SDL_PollEvent(_event))
+		return;
+	if (_event->type == SDL_MOUSEBUTTONDOWN)
+	{
+		SDL_MouseButtonEvent mouseEvent = _event->button;
+                if (mouseEvent.button == SDL_BUTTON_LEFT )
+			_stopped = true;
+	}
+	if (_event->type == SDL_QUIT)
+        {
+		_stopped = true;
+		exit(0);
+        }
+}
+
 void PoissonDiskSample::reDraw()
 {
+
 	SDL_RenderPresent(_renderer);
         SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
 	SDL_RenderClear(_renderer);
 	for (auto sample : _samples)
 	{
-		drawSample(sample.x, sample.y, 10, 255, 255, 255, 255);
+		drawSample(sample.x, sample.y, CIRCLE_RADIUS, 255, 255, 255, 255);
 	}
 	for (auto newSample : _newSamples)
 	{
-		drawSample(newSample.x, newSample.y, 10, 255, 0, 0, 255);
+		drawSample(newSample.x, newSample.y, CIRCLE_RADIUS, 255, 0, 0, 255);
 	}
+	pollEvents();
 }
