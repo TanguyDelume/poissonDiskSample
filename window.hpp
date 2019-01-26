@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <vector>
 
-#include "poissonDisk.h"
+#include "poissonDisk.hpp"
 
 class Window 
 {

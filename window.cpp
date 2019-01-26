@@ -1,6 +1,6 @@
-#include "window.h"
+#include "window.hpp"
 
-#define DISTANCE 40
+#define DISTANCE 30
 
 Window::Window(const std::string &title, int width, int height) :
 	_title(title), _width(width), _height(height)

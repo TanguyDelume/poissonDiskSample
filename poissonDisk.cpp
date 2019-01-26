@@ -1,4 +1,4 @@
-#include "poissonDisk.h"
+#include "poissonDisk.hpp"
 
 #define CIRCLE_RADIUS 15
 
